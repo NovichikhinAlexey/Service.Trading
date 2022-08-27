@@ -13,5 +13,11 @@ namespace Service.Trading.Settings
 
         [YamlProperty("Trading.ElkLogs")]
         public LogElkSettings ElkLogs { get; set; }
+        
+        [YamlProperty("Trading.HuobiApiKey")]
+        public string HuobiApiKey { get; set; }
+        
+        [YamlProperty("Trading.HuobiApiSecret")]
+        public string HuobiApiSecret { get; set; }
     }
 }

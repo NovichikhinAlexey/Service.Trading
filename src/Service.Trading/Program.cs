@@ -14,7 +14,7 @@ namespace Service.Trading
 {
     public class Program
     {
-        public const string SettingsFileName = ".myjetwallet";
+        public const string SettingsFileName = ".cubi";
 
         public static SettingsModel Settings { get; private set; }
 
