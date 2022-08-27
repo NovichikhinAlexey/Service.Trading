@@ -39,15 +39,34 @@ using (var client = new HuobiClient())
         }
         Console.WriteLine("=====================\n");
     }
+
+    {
+        var res = await client.SpotApi.ExchangeData.GetSymbolsAsync();
+        var symbols = new List<string>()
+        {
+            "btcusdt", "ethusdt", "xlmusdt", "xrpusdt"
+        };
+        
+        Console.WriteLine(JsonConvert.SerializeObject(res.Data.Where(e => symbols.Contains(e.Name)), Formatting.Indented));
+        return;
+    }
     
 }
+
+
 
 Console.WriteLine("");
 Console.WriteLine("Press enter to continue to the socket client..");
 Console.ReadLine();
 
+
+
+
 // Socket client
 var socketClient = new HuobiSocketClient();
+
+//await socketClient.SpotStreams.SubscribeToTickerUpdatesAsync()
+
 await socketClient.SpotStreams.SubscribeToKlineUpdatesAsync("ethusdt", KlineInterval.FiveMinutes, data =>
 {
     Console.WriteLine("Received kline update. Last price: " + data.Data.ClosePrice);

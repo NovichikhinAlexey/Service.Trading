@@ -12,7 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Service.Trading.Client\Service.Trading.Client.csproj" />
+    <ProjectReference Include="..\..\src\Service.Trading.Domain\Service.Trading.Domain.csproj" />
     <ProjectReference Include="..\..\src\Service.Trading.Grpc\Service.Trading.Grpc.csproj" />
+    <ProjectReference Include="..\..\src\Service.Trading.Huobi\Service.Trading.Huobi.csproj" />
   </ItemGroup>
 
 </Project>
