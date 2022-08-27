@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using ProtoBuf.Grpc.Client;
 using Service.Trading.Client;
-using Service.Trading.Grpc.Models;
 
 namespace TestApp
 {
@@ -16,11 +15,11 @@ namespace TestApp
             Console.ReadLine();
 
 
-            var factory = new TradingClientFactory("http://localhost:5001");
-            var client = factory.GetHelloService();
+            var factory = new TradingClientFactory("http://localhost:80");
+            var client = factory.GetCubiTradingClient();
 
-            var resp = await  client.SayHelloAsync(new HelloRequest(){Name = "Alex"});
-            Console.WriteLine(resp?.Message);
+            // var resp = await  client.SayHelloAsync(new HelloRequest(){Name = "Alex"});
+            // Console.WriteLine(resp?.Message);
 
             Console.WriteLine("End");
             Console.ReadLine();

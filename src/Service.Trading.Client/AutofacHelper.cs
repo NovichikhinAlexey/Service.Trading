@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Service.Trading.Grpc;
+using CubiTradingService;
 
 // ReSharper disable UnusedMember.Global
 
@@ -11,7 +11,7 @@ namespace Service.Trading.Client
         {
             var factory = new TradingClientFactory(grpcServiceUrl);
 
-            builder.RegisterInstance(factory.GetHelloService()).As<IHelloService>().SingleInstance();
+            builder.RegisterInstance(factory.GetCubiTradingClient()).As<CubiTrading.CubiTradingClient>().SingleInstance();
         }
     }
 }

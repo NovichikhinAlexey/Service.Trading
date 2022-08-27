@@ -6,6 +6,7 @@ using MySettingsReader;
 using Newtonsoft.Json;
 using Service.Trading.Settings;
 
+//https://github.com/JKorf/Huobi.Net/blob/master/Examples/Huobi.Net.ConsoleClient/Program.cs
 
 var settings = SettingsReader.GetSettings<SettingsModel>(".cubi");
 

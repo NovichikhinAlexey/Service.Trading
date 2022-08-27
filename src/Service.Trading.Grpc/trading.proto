@@ -1,0 +1,34 @@
+
+syntax = "proto3";
+
+package cubi_trading_service;
+
+service CubiTrading {
+
+  // execute trade
+  rpc ExecuteTrade(ExecuteTradeRequest) returns (ExecuteTradeResponse) {}
+  
+}
+
+message ExecuteTradeRequest {
+  string RequestId = 1;
+  string SellAssetSymbol = 2;
+  string BuyAssetSymbol = 3;
+  double SellAmount = 4;
+  double BuyAmount = 5;
+}
+
+message ExecuteTradeResponse {
+  string RequestId = 1;
+  
+  // 0 = OK; 1 = PriceIsChanged; 2 = NotEnoughLiquidity
+  int32 ErrorCode = 2;
+  string ErrorMessage = 3;
+  
+  string SellAssetSymbol = 10;
+  string BuyAssetSymbol = 11;
+  double SellAmount = 12;
+  double BuyAmount = 13;
+  string FeeAsset = 14;
+  double FeeAmount = 15;
+}

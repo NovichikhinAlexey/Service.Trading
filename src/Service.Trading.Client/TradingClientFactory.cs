@@ -1,16 +1,25 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using CubiTradingService;
+using Grpc.Core;
+using Grpc.Core.Interceptors;
+using Grpc.Net.Client;
+using JetBrains.Annotations;
 using MyJetWallet.Sdk.Grpc;
-using Service.Trading.Grpc;
+using MyJetWallet.Sdk.GrpcMetrics;
 
 namespace Service.Trading.Client
 {
     [UsedImplicitly]
-    public class TradingClientFactory: MyGrpcClientFactory
+    public class TradingClientFactory
     {
-        public TradingClientFactory(string grpcServiceUrl) : base(grpcServiceUrl)
+        private readonly CallInvoker _channel;
+        
+        public TradingClientFactory(string grpcServiceUrl)
         {
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            _channel = GrpcChannel.ForAddress(grpcServiceUrl).Intercept((Interceptor) new PrometheusMetricsInterceptor());
         }
 
-        public IHelloService GetHelloService() => CreateGrpcService<IHelloService>();
+        public CubiTrading.CubiTradingClient GetCubiTradingClient() => new(_channel);
     }
 }

@@ -5,11 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.48.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Service.Trading.Domain.Models\Service.Trading.Domain.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="trading.proto" />
+    <Protobuf Include="trading.proto" />
   </ItemGroup>
 
 </Project>
