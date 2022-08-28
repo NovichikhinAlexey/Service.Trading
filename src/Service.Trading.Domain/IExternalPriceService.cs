@@ -7,5 +7,6 @@ namespace Service.Trading.Domain;
 public interface IExternalPriceService
 {
     List<ExternalPrice> GetBySource(string source);
+    ExternalPrice GetBySourceAndMarket(string source, string market);
     public void UpdatePrice(DateTime timestamp, string source, string market, decimal ask, decimal bid);
 }

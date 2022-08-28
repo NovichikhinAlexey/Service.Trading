@@ -21,6 +21,20 @@ public class ExternalPriceService : IExternalPriceService
         }
     }
 
+    public ExternalPrice GetBySourceAndMarket(string source, string market)
+    {
+        lock (_gate)
+        {
+            if (!_prices.TryGetValue(source, out var sourceItem))
+                throw new PriceNotFoundException($"Price not found for: {source}; {market}");
+            
+            if (!sourceItem.TryGetValue(market, out var marketItem))
+                throw new PriceNotFoundException($"Price not found for: {source}; {market}");
+
+            return marketItem;
+        }
+    }
+
     public void UpdatePrice(DateTime timestamp, string source, string market, decimal ask, decimal bid)
     {
         lock (_gate)

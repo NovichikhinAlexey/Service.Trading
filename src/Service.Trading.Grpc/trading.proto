@@ -16,12 +16,13 @@ message ExecuteTradeRequest {
   string BuyAssetSymbol = 3;
   double SellAmount = 4;
   double BuyAmount = 5;
+  string ClientId = 6;
 }
 
 message ExecuteTradeResponse {
   string RequestId = 1;
   
-  // 0 = OK; 1 = PriceIsChanged; 2 = NotEnoughLiquidity
+  // 0 = Ok; 1 = PriceIsChanged; 2 = NotEnoughLiquidity; InternalError = 3
   int32 ErrorCode = 2;
   string ErrorMessage = 3;
   

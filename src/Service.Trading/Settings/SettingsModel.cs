@@ -19,5 +19,12 @@ namespace Service.Trading.Settings
         
         [YamlProperty("Trading.HuobiApiSecret")]
         public string HuobiApiSecret { get; set; }
+        
+        [YamlProperty("Trading.MinMarkupPercentage")]
+        public decimal MinMarkupPercentage { get; set; }
+        
+        [YamlProperty("Trading.MaxMarkupPercentage")]
+        public decimal MaxMarkupPercentage { get; set; }
+        
     }
 }

@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Service.Trading.Domain\Service.Trading.Domain.csproj" />
     <ProjectReference Include="..\Service.Trading.Grpc\Service.Trading.Grpc.csproj" />
+    <ProjectReference Include="..\Service.Trading.Huobi\Service.Trading.Huobi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
