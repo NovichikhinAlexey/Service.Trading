@@ -5,7 +5,9 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Service.Trading.Domain;
+using Service.Trading.Domain.Exceptions;
 using Service.Trading.Domain.Models;
+using Service.Trading.Domain.Trade;
 
 namespace Service.Trading.Services
 {

@@ -3,7 +3,9 @@ using Huobi.Net.Clients;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Service.Trading.Domain;
+using Service.Trading.Domain.Configurations;
 using Service.Trading.Domain.Models;
+using Service.Trading.Domain.Prices;
 
 namespace Service.Trading.Huobi;
 

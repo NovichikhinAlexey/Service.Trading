@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Service.Trading.Domain.Models;
 
-namespace Service.Trading.Domain;
+namespace Service.Trading.Domain.Prices;
 
 public interface IExternalPriceService
 {

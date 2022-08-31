@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Service.Trading.Domain.Models;
 
-namespace Service.Trading.Domain;
+namespace Service.Trading.Domain.Trade;
 
 public interface ITradeService
 {

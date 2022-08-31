@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Service.Trading.Domain;
+using Service.Trading.Domain.Configurations;
 using Service.Trading.Domain.Models;
+using Service.Trading.Domain.Prices;
 using Service.Trading.Huobi;
 
 var mapper = new AssetMapperService();

@@ -14,6 +14,9 @@ namespace Service.Trading.Settings
         [YamlProperty("Trading.ElkLogs")]
         public LogElkSettings ElkLogs { get; set; }
         
+        [YamlProperty("Trading.MyNoSqlWriterUrl")]
+        public string MyNoSqlWriterUrl { get; set; }
+        
         [YamlProperty("Trading.HuobiApiKey")]
         public string HuobiApiKey { get; set; }
         
@@ -21,10 +24,15 @@ namespace Service.Trading.Settings
         public string HuobiApiSecret { get; set; }
         
         [YamlProperty("Trading.MinMarkupPercentage")]
-        public decimal MinMarkupPercentage { get; set; }
+        public string MinMarkupPercentage { get; set; }
         
         [YamlProperty("Trading.MaxMarkupPercentage")]
-        public decimal MaxMarkupPercentage { get; set; }
+        public string MaxMarkupPercentage { get; set; }
+        
+        [YamlProperty("Trading.QuotePriceRecalculateIntervalInSec")]
+        public int QuotePriceRecalculateIntervalInSec { get; set; }
+        
+        
         
     }
 }

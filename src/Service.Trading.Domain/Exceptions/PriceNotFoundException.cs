@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Service.Trading.Domain;
+namespace Service.Trading.Domain.Exceptions;
 
 public class PriceNotFoundException : Exception
 {

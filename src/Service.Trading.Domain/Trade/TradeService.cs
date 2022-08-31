@@ -4,29 +4,29 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Service.Trading.Domain.Configurations;
 using Service.Trading.Domain.Models;
+using Service.Trading.Domain.Prices;
 
-namespace Service.Trading.Domain;
+namespace Service.Trading.Domain.Trade;
 
 public class TradeService : ITradeService
 {
     private readonly IExternalPriceService _externalPriceService;
     private readonly IAssetMapperService _assetMapperService;
     private readonly ILogger<TradeService> _logger;
-    private readonly decimal _minMarkupPercentage;
-    private readonly decimal _maxMarkupPercentage;
+    private readonly ITradeConfiguration _tradeConfiguration;
 
     public TradeService(
         IExternalPriceService externalPriceService,
         IAssetMapperService assetMapperService,
         ILogger<TradeService> logger,
-        decimal minMarkupPercentage, decimal maxMarkupPercentage)
+        ITradeConfiguration tradeConfiguration)
     {
         _externalPriceService = externalPriceService;
         _assetMapperService = assetMapperService;
         _logger = logger;
-        _minMarkupPercentage = minMarkupPercentage;
-        _maxMarkupPercentage = maxMarkupPercentage;
+        _tradeConfiguration = tradeConfiguration;
     }
 
     public async Task<TradeRequest> ExecuteTrade(TradeRequest incomeTrade)
@@ -39,6 +39,8 @@ public class TradeService : ITradeService
         
         var marketList = _assetMapperService.GetAllBySource(ExternalMarketConst.HuobiSource);
 
+        var tradeConfig = _tradeConfiguration.GetTradeConfig();
+        
         // try handle in buy trade in one market
         
         var market = marketList.FirstOrDefault(e =>
@@ -66,8 +68,11 @@ public class TradeService : ITradeService
                     RequestId = incomeTrade.RequestId
                 }
             };
+            
+            incomeTrade.ExpectedBuyAmount = incomeTrade.BuyAmount;
+            incomeTrade.ExpectedSellAmount = volume;
 
-            if (incomeTrade.SellAmount < volume * (1 + _minMarkupPercentage/100m))
+            if (incomeTrade.SellAmount < incomeTrade.ExpectedSellAmount * (1 + tradeConfig.MinMarkupPercentage/100m))
             {
                 _logger.LogInformation($"Price is changed, clientSellAmount={incomeTrade.SellAmount}; expected= {volume}; Client: {incomeTrade.ClientId}");
                 incomeTrade.ErrorCode = (int) ErrorCodeTrade.PriceIsChanged;
@@ -75,9 +80,7 @@ public class TradeService : ITradeService
                 await SaveTrade(incomeTrade);
                 return incomeTrade;
             }
-
-            incomeTrade.ExpectedBuyAmount = incomeTrade.BuyAmount;
-            incomeTrade.ExpectedSellAmount = volume;
+            
             await SaveExternalTrades(list);
             await SaveTrade(incomeTrade);
             return incomeTrade;
@@ -109,7 +112,10 @@ public class TradeService : ITradeService
                 }
             };
             
-            if (incomeTrade.BuyAmount > volume * (1 + _minMarkupPercentage/100m))
+            incomeTrade.ExpectedBuyAmount = volume;
+            incomeTrade.ExpectedSellAmount = incomeTrade.SellAmount;
+            
+            if (incomeTrade.BuyAmount > incomeTrade.ExpectedBuyAmount * (1 - tradeConfig.MinMarkupPercentage/100m))
             {
                 _logger.LogInformation($"Price is changed, clientBuyAmount={incomeTrade.BuyAmount}; expected= {volume}; Client: {incomeTrade.ClientId}");
                 incomeTrade.ErrorCode = (int) ErrorCodeTrade.PriceIsChanged;
@@ -118,8 +124,6 @@ public class TradeService : ITradeService
                 return incomeTrade;
             }
             
-            incomeTrade.ExpectedBuyAmount = volume;
-            incomeTrade.ExpectedSellAmount = incomeTrade.SellAmount;
             await SaveExternalTrades(list);
             await SaveTrade(incomeTrade);
             return incomeTrade;

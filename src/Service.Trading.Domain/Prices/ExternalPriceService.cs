@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Service.Trading.Domain.Exceptions;
 using Service.Trading.Domain.Models;
 
-namespace Service.Trading.Domain;
+namespace Service.Trading.Domain.Prices;
 
 public class ExternalPriceService : IExternalPriceService
 {
