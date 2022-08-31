@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           path: ./publish-api
           registry: docker.pkg.github.com
-          repository: ${{ secrets.ORG_NAME }}/service.trading/service.trading-test
+          repository: ${{ secrets.ORG_NAME }}/service.trading/service.trading
           tags: latest
           build_args: app_version=myjetwallet.service.registration-test:latest,app_compilation_date=${{ steps.current-time.outputs.formattedTime }}
 
