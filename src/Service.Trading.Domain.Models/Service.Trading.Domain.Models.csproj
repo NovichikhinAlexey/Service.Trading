@@ -9,8 +9,4 @@
     <PackageReference Include="MyJetWallet.Sdk.NoSql" Version="2.2.11" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NoSql" />
-  </ItemGroup>
-
 </Project>

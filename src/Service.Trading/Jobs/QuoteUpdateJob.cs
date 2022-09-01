@@ -11,7 +11,7 @@ namespace Service.Trading.Jobs
 {
     public class QuoteUpdateJob
     {
-        private readonly TradePriceCalculator _tradePriceCalculator;
+        private readonly ITradePriceCalculator _tradePriceCalculator;
         private readonly ILogger<QuoteUpdateJob> _logger;
         private readonly IMyNoSqlServerDataWriter<QuotePrice> _writer;
         private readonly ITradeConfiguration _configuration;
@@ -19,7 +19,7 @@ namespace Service.Trading.Jobs
         private DateTime _lastCleanTime = DateTime.MinValue;
 
         public QuoteUpdateJob(
-            TradePriceCalculator tradePriceCalculator, 
+            ITradePriceCalculator tradePriceCalculator, 
             ILogger<QuoteUpdateJob> logger,
             IMyNoSqlServerDataWriter<QuotePrice> writer,
             ITradeConfiguration configuration)

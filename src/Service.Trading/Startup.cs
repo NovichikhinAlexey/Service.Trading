@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Autofac;
+using MyJetWallet.Sdk.Postgres;
 using MyJetWallet.Sdk.Service;
 using Service.Trading.Modules;
+using Service.Trading.Postgres;
 using Service.Trading.Services;
 
 namespace Service.Trading
@@ -13,6 +15,10 @@ namespace Service.Trading
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureJetWallet<ApplicationLifetimeManager>(Program.Settings.ZipkinUrl);
+            
+            MyDbContext.LoggerFactory = Program.LogFactory;
+            services.AddDatabase(MyContext.Schema, Program.Settings.PostgresConnectionString, o => new MyContext(o));  
+            MyDbContext.LoggerFactory = null;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

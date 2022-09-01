@@ -9,6 +9,7 @@ using Service.Trading.Domain.Prices;
 using Service.Trading.Domain.Trade;
 using Service.Trading.Huobi;
 using Service.Trading.Jobs;
+using Service.Trading.Postgres;
 
 namespace Service.Trading.Modules
 {
@@ -47,6 +48,7 @@ namespace Service.Trading.Modules
 
             builder.RegisterType<TradePriceCalculator>()
                 .AsSelf()
+                .As<ITradePriceCalculator>()
                 .AutoActivate()
                 .SingleInstance();
 
@@ -54,6 +56,11 @@ namespace Service.Trading.Modules
 
             builder.RegisterType<QuoteUpdateJob>()
                 .AsSelf()
+                .AutoActivate()
+                .SingleInstance();
+
+            builder.RegisterType<DbFactory>()
+                .As<IDbFactory>()
                 .AutoActivate()
                 .SingleInstance();
         }

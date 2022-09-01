@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Service.Trading.Domain.Models\Service.Trading.Domain.Models.csproj" />
+    <ProjectReference Include="..\Service.Trading.Postgres\Service.Trading.Postgres.csproj" />
   </ItemGroup>
 
   <ItemGroup>

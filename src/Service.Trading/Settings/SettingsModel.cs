@@ -32,6 +32,10 @@ namespace Service.Trading.Settings
         [YamlProperty("Trading.QuotePriceRecalculateIntervalInSec")]
         public int QuotePriceRecalculateIntervalInSec { get; set; }
         
+        [YamlProperty("Trading.PostgresConnectionString")]
+        public string PostgresConnectionString { get; set; }
+        
+        
         
         
     }

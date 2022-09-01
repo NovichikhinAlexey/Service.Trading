@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Trading.Domain.Configurations;
 using Service.Trading.Domain.Models;
 using Service.Trading.Domain.Prices;
+using Service.Trading.Postgres;
 
 namespace Service.Trading.Domain.Trade;
 
@@ -16,17 +18,23 @@ public class TradeService : ITradeService
     private readonly IAssetMapperService _assetMapperService;
     private readonly ILogger<TradeService> _logger;
     private readonly ITradeConfiguration _tradeConfiguration;
+    private readonly IDbFactory _dbFactory;
+    private readonly ITradePriceCalculator _tradePriceCalculator;
 
     public TradeService(
         IExternalPriceService externalPriceService,
         IAssetMapperService assetMapperService,
         ILogger<TradeService> logger,
-        ITradeConfiguration tradeConfiguration)
+        ITradeConfiguration tradeConfiguration,
+        IDbFactory dbFactory,
+        ITradePriceCalculator tradePriceCalculator)
     {
         _externalPriceService = externalPriceService;
         _assetMapperService = assetMapperService;
         _logger = logger;
         _tradeConfiguration = tradeConfiguration;
+        _dbFactory = dbFactory;
+        _tradePriceCalculator = tradePriceCalculator;
     }
 
     public async Task<TradeRequest> ExecuteTrade(TradeRequest incomeTrade)
@@ -36,7 +44,14 @@ public class TradeService : ITradeService
         incomeTrade.Timestamp = DateTime.UtcNow;
         incomeTrade.ErrorCode = (int) ErrorCodeTrade.Ok;
         incomeTrade.ErrorMessage = ErrorCodeTrade.Ok.ToString();
-        
+
+        TradePrecheck(incomeTrade);
+        if (incomeTrade.ErrorCode != (int) ErrorCodeTrade.Ok)
+        {
+            await SaveTrade(incomeTrade);
+            return incomeTrade;
+        }
+
         var marketList = _assetMapperService.GetAllBySource(ExternalMarketConst.HuobiSource);
 
         var tradeConfig = _tradeConfiguration.GetTradeConfig();
@@ -65,7 +80,9 @@ public class TradeService : ITradeService
                     Amount = incomeTrade.BuyAmount,
                     Volume = volume,
                     IsBuySide = true,
-                    RequestId = incomeTrade.RequestId
+                    RequestId = incomeTrade.RequestId,
+                    Timestamp = DateTime.UtcNow,
+                    Status = ExternalTradeStatus.New
                 }
             };
             
@@ -108,7 +125,9 @@ public class TradeService : ITradeService
                     Amount = incomeTrade.SellAmount,
                     Volume = volume,
                     IsBuySide = false,
-                    RequestId = incomeTrade.RequestId
+                    RequestId = incomeTrade.RequestId,
+                    Timestamp = DateTime.UtcNow,
+                    Status = ExternalTradeStatus.New
                 }
             };
             
@@ -136,15 +155,58 @@ public class TradeService : ITradeService
         return incomeTrade;
     }
 
+    private void TradePrecheck(TradeRequest incomeTrade)
+    {
+        var tradePriceList = _tradePriceCalculator.GetQuotes();
+        var tradePrice = tradePriceList.FirstOrDefault(e =>
+            e.SellAsset == incomeTrade.SellAssetSymbol && e.BuyAsset == incomeTrade.BuyAssetSymbol);
+
+        if (tradePrice == null)
+        {
+            _logger.LogError("Cannot found QuotePrice for trade {requestId}: {jsonString}",
+                incomeTrade.RequestId, JsonSerializer.Serialize(incomeTrade));
+            incomeTrade.ErrorCode = (int) ErrorCodeTrade.NotEnoughLiquidity;
+            incomeTrade.ErrorMessage = ErrorCodeTrade.NotEnoughLiquidity.ToString();
+        }
+        else if (incomeTrade.SellAmount < tradePrice.MinSellAmount)
+        {
+            _logger.LogError("Cannot execute trade, sell amount to small {requestId}: {jsonString}",
+                incomeTrade.RequestId, JsonSerializer.Serialize(incomeTrade));
+            incomeTrade.ErrorCode = (int) ErrorCodeTrade.SellAmountToSmall;
+            incomeTrade.ErrorMessage = ErrorCodeTrade.SellAmountToSmall.ToString();
+        }
+        else if (incomeTrade.BuyAmount < tradePrice.MinBuyAmount)
+        {
+            _logger.LogError("Cannot execute trade, buy amount to small {requestId}: {jsonString}",
+                incomeTrade.RequestId, JsonSerializer.Serialize(incomeTrade));
+            incomeTrade.ErrorCode = (int) ErrorCodeTrade.BuyAmountToSmall;
+            incomeTrade.ErrorMessage = ErrorCodeTrade.BuyAmountToSmall.ToString();
+        }
+        else if (incomeTrade.SellAmount > tradePrice.MaxSellAmount)
+        {
+            _logger.LogError("Cannot execute trade, sell amount to large {requestId}: {jsonString}",
+                incomeTrade.RequestId, JsonSerializer.Serialize(incomeTrade));
+            incomeTrade.ErrorCode = (int) ErrorCodeTrade.SellAmountToLarge;
+            incomeTrade.ErrorMessage = ErrorCodeTrade.SellAmountToLarge.ToString();
+        }
+        else if (incomeTrade.BuyAmount > tradePrice.MaxBuyAmount)
+        {
+            _logger.LogError("Cannot execute trade, buy amount to large {requestId}: {jsonString}",
+                incomeTrade.RequestId, JsonSerializer.Serialize(incomeTrade));
+            incomeTrade.ErrorCode = (int) ErrorCodeTrade.BuyAmountToLarge;
+            incomeTrade.ErrorMessage = ErrorCodeTrade.BuyAmountToLarge.ToString();
+        }
+    }
+
     private async Task SaveExternalTrades(List<ExternalTrade> trades)
     {
-        //todo: Save trade and execute after
-        Console.WriteLine($"[ExternalTrade] {JsonSerializer.Serialize(trades)}");
+        await using var ctx = _dbFactory.Context();
+        await ctx.UpsertRange<ExternalTrade>(trades).On(e => e.TradeId).NoUpdate().RunAsync();
     }
 
     private async Task SaveTrade(TradeRequest trade)
     {
-        //todo: Save trade
-        Console.WriteLine($"[Trade] {JsonSerializer.Serialize(trade)}");
+        await using var ctx = _dbFactory.Context();
+        await ctx.Upsert(trade).On(e => e.RequestId).NoUpdate().RunAsync();
     }
 }
