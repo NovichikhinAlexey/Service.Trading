@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.Trading.Domain.Configurations;
 using Service.Trading.Domain.Models;
@@ -56,7 +57,7 @@ public class TradePriceCalculator: ITradePriceCalculator
                     Math.Round(market.MaxAmount/2, market.AmountAccuracy, MidpointRounding.ToZero),
                     Math.Round(market.MaxVolume/2, market.VolumeAccuracy, MidpointRounding.ToZero),
                     
-                    DateTime.UtcNow
+                    DateTime.UtcNow.UnixTime()
                 );
                 result.Add(quote);
                 
@@ -73,7 +74,7 @@ public class TradePriceCalculator: ITradePriceCalculator
                     Math.Round(market.MaxVolume/2, market.VolumeAccuracy, MidpointRounding.ToZero),
                     Math.Round(market.MaxAmount/2, market.AmountAccuracy, MidpointRounding.ToZero),
 
-                    DateTime.UtcNow
+                    DateTime.UtcNow.UnixTime()
                 );
                 result.Add(quote);
             }

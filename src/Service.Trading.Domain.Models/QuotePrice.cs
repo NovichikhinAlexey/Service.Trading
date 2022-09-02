@@ -12,7 +12,7 @@ namespace Service.Trading.Domain.Models
         public QuotePrice(
             string sellAsset, string buyAsset, decimal price, int sellAssetAccuracy, int buyAssetAccuracy, 
             decimal minSellAmount, decimal minBuyAmount, decimal maxSellAmount, decimal maxBuyAmount,
-            DateTime timestamp)
+            long timestamp)
         {
             SellAsset = sellAsset;
             BuyAsset = buyAsset;
@@ -46,6 +46,6 @@ namespace Service.Trading.Domain.Models
         public decimal MaxSellAmount { get; set; }
         public decimal MaxBuyAmount { get; set; }
         
-        public DateTime Timestamp { get; set; }
+        public long Timestamp { get; set; }
     }
 }
