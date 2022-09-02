@@ -2,6 +2,7 @@
 
 # Config
 
+```
 Trading:
   SeqServiceUrl:
   ZipkinUrl:
@@ -17,5 +18,5 @@ Trading:
   QuotePriceRecalculateIntervalInSec: 1
   MyNoSqlWriterUrl: <NOSQL_URL_WRITER>
   PostgresConnectionString: Server=<DB_SERVER_HOST>;Database=<DB_NAME>;Port=5432;User Id=<DB_USER>;Password=<DB_PASSWORD>;Ssl Mode=Require;Minimum Pool Size=1;Maximum Pool Size=1;ConnectionLifetime=10800;
-
+```
 
