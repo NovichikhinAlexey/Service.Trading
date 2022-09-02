@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service.Trading.Postgres;
 
-public class DbFactory
+public class DbFactory: IDbFactory
 {
     private readonly DbContextOptionsBuilder<MyContext> _dbContextOptionsBuilder;
     
